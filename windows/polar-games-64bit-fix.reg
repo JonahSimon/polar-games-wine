@@ -1,0 +1,7 @@
+Windows Registry Editor Version 5.00
+
+; Polar Games disc on 64-bit Windows: install WildTangent to C:\WildTangent instead of
+; "C:\Program Files (x86)\WildTangent". The installer chokes on the "(x86)" parentheses.
+; Double-click this BEFORE running the disc installer.
+[HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\WildTangent]
+"wtRoot"="C:\\WildTangent\\"

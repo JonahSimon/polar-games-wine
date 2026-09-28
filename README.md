@@ -1,4 +1,4 @@
-# Polar Bowler & Polar Golfer on Linux (Wine): fixes and install scripts
+# Polar Bowler & Polar Golfer on Linux (Wine) and 64-bit Windows: fixes and install scripts
 
 WildTangent's **Polar Bowler** and **Polar Golfer** (2004–2006) don't work under Wine out of the box. They
 freeze on the first frame of gameplay, the disc installer never gets past "Installing", and the DRM refuses
@@ -13,9 +13,8 @@ downloads, in a fresh Wine prefix, through to actual gameplay.
 Tested on Arch-based Linux with **Wine 11.18** (the default WoW64 build), KDE Plasma on Wayland (XWayland).
 Nothing here needs a 32-bit Wine or a Windows VM.
 
-**Windows:** not covered yet. Reportedly the disc games run on older Windows (XP era) but freeze at launch
-on Windows 7 and newer, possibly only the 64-bit editions. That hasn't been investigated, and these scripts
-are Linux-only.
+**On 64-bit Windows?** The disc's installer freezes at 90% there. The fix is one registry file, and none of
+the Wine steps below are needed: see [64-bit Windows](#64-bit-windows-the-disc-installer-freezes-at-90).
 
 **This kit contains no game files.** It is only scripts, Wine patches and this write-up. You need your own
 copy of the game (the ISO or setup exe); the scripts read from it and patch the installed copy in place.
@@ -52,7 +51,56 @@ exact bytes it expects before changing anything, and stops with an error if they
 
 ---
 
-## What's actually broken, and how each fix works
+## 64-bit Windows: the disc installer freezes at 90%
+
+The disc games install and play on 32-bit Windows (XP era), but on 64-bit Windows (7, 8, 10, 11) the
+installer stops at **90% ("Verifying Web Driver...")** and never finishes. You may first see a box saying
+**"Unable to locate kernel component: wtKernel"**. The disc menu also stays on top of everything, so the
+installer window can be hidden behind it and the whole thing looks frozen.
+
+**Fix:** before installing, double-click [`windows/polar-games-64bit-fix.reg`](windows/polar-games-64bit-fix.reg)
+and accept the prompt. Then run `polarbowler_install.exe` or `polargolfer_install.exe` from the disc as
+administrator (running them directly avoids the disc menu hiding the installer). Install normally. If you
+already tried once, just rerun the installer after applying the fix.
+
+The file sets one value, which tells WildTangent's installer to use `C:\WildTangent` instead of
+`C:\Program Files (x86)\WildTangent`:
+
+    [HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\WildTangent]
+    "wtRoot"="C:\\WildTangent\\"
+
+**Why it breaks.** The disc installer runs a WildTangent sub-installer, `CDASilentInstall.exe` (an NSIS
+installer from 2005). It loads its own DLLs through NSIS's `System` plugin with calls written like
+`C:\...\CDA\cdaEngine0500.dll::cdaInstallerEngineInit(...)`. That old plugin treats the first `(` in the
+string as the start of the argument list. On 64-bit Windows the path is `C:\Program Files (x86)\...`, so it
+splits at the `(` of `(x86)`, misreads the rest, and crashes (access violation in `System.dll` at offset
+`0x1b08`). The sub-installer dies silently. WildTangent's engine components, including `wtKernel`, never get
+registered, and the main installer waits forever at the "Verifying Web Driver" step. 32-bit Windows has
+plain `C:\Program Files\`, with no parentheses, which is why it worked there.
+
+Tested on Windows 10 22H2 x64 (in a VM), starting from a clean install each time:
+
+| | Result |
+|---|---|
+| Disc installer, no fix | `CDASilentInstall.exe` crashes (`0xC0000005`, `System.dll+0x1b08`), stuck at 90% after the wtKernel message. Every time. XP compatibility mode doesn't help. |
+| Same, with the `.reg` fix | Both installers finish. The disc's retail licenses install by themselves (no demo timer). Polar Bowler bowls and Polar Golfer plays a hole, with the original unpatched files. |
+
+The Wine problems in the next section don't apply to Windows: real Windows accepts the DirectInput call and
+the certificate store as they are.
+
+Two things came up only because the test machine was a VM with no GPU and no sound card. You probably won't
+hit them on a real PC:
+- "Sorry, Polar Bowler requires 3D hardware acceleration", or a crash in `d3d10warp.dll`: Windows has no
+  real 3D driver. If this happens on real hardware, [dgVoodoo2](https://github.com/dege-diosg/dgVoodoo2)
+  fixes it: copy `MS\x86\DDraw.dll` and `D3DImm.dll` (plus `dgVoodoo.conf`) next to `Polar.exe`/`golf.exe`.
+- "FMOD Init Failed!" (Golfer only): there's no audio output device.
+
+The installer also sets up WildTangent's background "Persistent" service to run at login, which triggers a
+UAC prompt. The games don't need it; you can say No.
+
+---
+
+## What's broken under Wine, and how each fix works
 
 There are five separate problems. **All three games** hit #1. **The disc games** hit all five.
 
@@ -201,6 +249,7 @@ its own tests fail. Once these are in Wine, only the registry and license steps 
 - `play.sh`: launch a game and leave fullscreen
 - `polar_tools.py`: NSIS extractor, the two DLL patches, the certificate-store fix (Python stdlib only)
 - `wt-unfullscreen.py`: sends the Esc for `play.sh`
+- `windows/polar-games-64bit-fix.reg`: the 64-bit Windows installer fix
 - `wine-patches/`: the upstream Wine patches (LGPL, like Wine)
 
 The scripts are MIT licensed (see `LICENSE`). WildTangent, Polar Bowler and Polar Golfer belong to their owners; no game files are included.
