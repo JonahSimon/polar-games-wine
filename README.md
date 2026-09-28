@@ -13,6 +13,9 @@ downloads, in a fresh Wine prefix, through to actual gameplay.
 Tested on Arch-based Linux with **Wine 11.18** (the default WoW64 build), KDE Plasma on Wayland (XWayland).
 Nothing here needs a 32-bit Wine or a Windows VM.
 
+**Windows:** not covered yet. The disc games have also been seen to freeze at launch on modern Windows; the
+cause there hasn't been investigated, and these scripts are Linux-only.
+
 **This kit contains no game files.** It is only scripts, Wine patches and this write-up. You need your own
 copy of the game (the ISO or setup exe); the scripts read from it and patch the installed copy in place.
 

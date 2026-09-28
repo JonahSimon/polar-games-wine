@@ -1,4 +1,4 @@
-From 757a88ef2ab191aeabc8a28286ff4558b8fddf6e Mon Sep 17 00:00:00 2001
+From 3346f5ea111ad17eed3f3804cb6d64c259c32260 Mon Sep 17 00:00:00 2001
 From: Jonah Paul Simon <Jman19922@gmail.com>
 Date: Fri, 25 Sep 2026 16:18:54 -0600
 Subject: [PATCH 3/3] crypt32: Read serialized store properties that precede
