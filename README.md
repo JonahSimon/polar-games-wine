@@ -14,7 +14,7 @@ Tested on Arch-based Linux with **Wine 11.18** (the default WoW64 build), KDE Pl
 Nothing here needs a 32-bit Wine or a Windows VM.
 
 **On 64-bit Windows?** The disc's installer freezes at 90% there. The fix is one registry file, and none of
-the Wine steps below are needed: see [64-bit Windows](#64-bit-windows-the-disc-installer-freezes-at-90).
+the Wine steps below are needed. Polar Bowler Classic works on Windows as is: see [64-bit Windows](#64-bit-windows-the-disc-installer-freezes-at-90).
 
 **This kit contains no game files.** It is only scripts, Wine patches and this write-up. You need your own
 copy of the game (the ISO or setup exe); the scripts read from it and patch the installed copy in place.
@@ -84,6 +84,10 @@ Tested on Windows 10 22H2 x64 (in a VM), starting from a clean install each time
 |---|---|
 | Disc installer, no fix | `CDASilentInstall.exe` crashes (`0xC0000005`, `System.dll+0x1b08`), stuck at 90% after the wtKernel message. Every time. XP compatibility mode doesn't help. |
 | Same, with the `.reg` fix | Both installers finish. The disc's retail licenses install by themselves (no demo timer). Polar Bowler bowls and Polar Golfer plays a hole, with the original unpatched files. |
+
+**Polar Bowler Classic** (`Polar Bowler Classic_setup.exe`) needs no fix on 64-bit Windows. It's a later
+repack with a normal Inno Setup installer that installs to `C:\Games` and doesn't use the CDA installer.
+Tested on the same Windows 10 x64 machine, it installed and bowled.
 
 The Wine problems in the next section don't apply to Windows: real Windows accepts the DirectInput call and
 the certificate store as they are.
