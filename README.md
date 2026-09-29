@@ -269,8 +269,12 @@ run `patch-webdriver` on `<install dir>\webdriver\webdriver.dll`.
 
 ## Proper fixes in Wine
 
-The binary patches are workarounds. The real bugs are in Wine, and `wine-patches/` has three fixes written
-against current Wine master, each with tests:
+The binary patches are workarounds. The real bugs are in Wine and are reported as
+[60400](https://bugs.winehq.org/show_bug.cgi?id=60400) (dinput),
+[60401](https://bugs.winehq.org/show_bug.cgi?id=60401) and
+[60402](https://bugs.winehq.org/show_bug.cgi?id=60402) (crypt32). `wine-patches/` has three fixes written against
+current Wine master, each with tests, for building your own Wine. They won't be sent upstream: they were written
+with an AI assistant, and WineHQ doesn't accept LLM-generated code.
 
 1. `dinput: Allow a NULL instance handle for DirectInput version 0x300.` (fixes #1 and removes three
    `todo_wine`s)
@@ -281,7 +285,7 @@ against current Wine master, each with tests:
 With those three applied, the **original, unpatched** `webdriver.dll`, `DRM0302.dll` and `WT.sto` all work.
 That was checked with a fresh prefix on a patched Wine build: both disc games and Classic played. Wine's
 dinput and crypt32 test suites pass with 0 failures on x86_64 and i386. Removing any one fix makes exactly
-its own tests fail. Once these are in Wine, only the registry and license steps are needed.
+its own tests fail. Once Wine fixes these bugs, only the registry and license steps will be needed.
 
 ## Files
 
@@ -291,6 +295,6 @@ its own tests fail. Once these are in Wine, only the registry and license steps 
 - `polar_tools.py`: NSIS extractor, the two DLL patches, the certificate-store fix (Python stdlib only)
 - `wt-unfullscreen.py`: sends the Esc for `play.sh`
 - `windows/polar-games-64bit-fix.reg`: the 64-bit Windows installer fix
-- `wine-patches/`: the upstream Wine patches (LGPL, like Wine)
+- `wine-patches/`: local fixes for Wine itself (LGPL, like Wine; not submitted upstream)
 
 The scripts are MIT licensed (see `LICENSE`). WildTangent, Polar Bowler and Polar Golfer belong to their owners; no game files are included.
