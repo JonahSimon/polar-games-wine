@@ -1,4 +1,4 @@
-From 7f71aa6dd38849851d4d9e496593ee499bf24f68 Mon Sep 17 00:00:00 2001
+From 7e7dbe2bba3a11b7feec637a400a0ba5bab4e13f Mon Sep 17 00:00:00 2001
 From: Jonah Paul Simon <Jman19922@gmail.com>
 Date: Fri, 25 Sep 2026 16:18:54 -0600
 Subject: [PATCH 2/3] crypt32: Don't free contexts still referenced on a forced
@@ -7,6 +7,8 @@ Subject: [PATCH 2/3] crypt32: Don't free contexts still referenced on a forced
 CertCloseStore(CERT_CLOSE_STORE_FORCE_FLAG) with an outstanding context
 reference freed the context and hit the assert in Context_Free. Defer the
 free until the last context reference is released instead.
+
+Wine-Bug: https://bugs.winehq.org/show_bug.cgi?id=60402
 ---
  dlls/crypt32/store.c | 18 ++++++++++++++++++
  1 file changed, 18 insertions(+)

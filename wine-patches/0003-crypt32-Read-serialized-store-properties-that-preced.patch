@@ -1,4 +1,4 @@
-From 3346f5ea111ad17eed3f3804cb6d64c259c32260 Mon Sep 17 00:00:00 2001
+From ee7fd5b7d88c01d0646cab7dba78835bc2fdb131 Mon Sep 17 00:00:00 2001
 From: Jonah Paul Simon <Jman19922@gmail.com>
 Date: Fri, 25 Sep 2026 16:18:54 -0600
 Subject: [PATCH 3/3] crypt32: Read serialized store properties that precede
@@ -9,6 +9,8 @@ itself (see CRYPT_SerializeStoreElement), but the reader rejected any property
 seen before the first context and returned an empty store, so a saved store
 with properties could not be loaded back. Queue properties until their context
 arrives.
+
+Wine-Bug: https://bugs.winehq.org/show_bug.cgi?id=60401
 ---
  dlls/crypt32/serialize.c   | 64 +++++++++++++++++++++++---------------
  dlls/crypt32/tests/store.c | 47 ++++++++++++++++++++++++++++
