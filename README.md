@@ -24,6 +24,13 @@ copy of the game (the ISO or setup exe); the scripts read from it and patch the 
 Requirements: `wine`, `7z` (p7zip), `python3`. Optional: `python-xlib`, which lets the scripts switch the
 game out of fullscreen for you (see [Fullscreen](#fullscreen)).
 
+Get the scripts first (or use **Code > Download ZIP** at the top of this page and unzip it):
+```sh
+git clone https://github.com/JonahSimon/polar-games-wine
+cd polar-games-wine
+```
+Then point them at your own copy of the game:
+
 **Double pack disc (Bowler + Golfer):**
 ```sh
 ./install-polar-games.sh polar-games.iso        # creates ~/.wine-polargames
@@ -58,10 +65,40 @@ installer stops at **90% ("Verifying Web Driver...")** and never finishes. You m
 **"Unable to locate kernel component: wtKernel"**. The disc menu also stays on top of everything, so the
 installer window can be hidden behind it and the whole thing looks frozen.
 
-**Fix:** before installing, double-click [`windows/polar-games-64bit-fix.reg`](windows/polar-games-64bit-fix.reg)
-and accept the prompt. Then run `polarbowler_install.exe` or `polargolfer_install.exe` from the disc as
-administrator (running them directly avoids the disc menu hiding the installer). Install normally. If you
-already tried once, just rerun the installer after applying the fix.
+### How to fix it, step by step
+
+You don't need Linux or any of the scripts for this. You need the disc (or `polar-games.iso`) and one small
+file from this page.
+
+1. **Download this kit.** Near the top of this page, click the green **Code** button, then
+   **Download ZIP**.
+2. **Unzip it.** Open your Downloads folder, right-click `polar-games-wine-main.zip`, choose
+   **Extract All...**, then click **Extract**.
+3. **Apply the fix.** In the extracted folder, open the `windows` folder and double-click
+   `polar-games-64bit-fix.reg`. Windows asks a few questions ("Do you want to allow this app...",
+   "Are you sure you want to continue?"). Answer **Yes** each time, then click **OK** when it says the keys
+   were added.
+4. **Open the disc.** Put the CD in, or double-click `polar-games.iso` (Windows 8 and later open ISO files
+   like a CD). If the game's menu pops up, close it: it can hide the installer and make it look frozen.
+   Then open **This PC** and open the disc drive to see its files.
+5. **Install a game.** Right-click `polarbowler_install.exe` (or `polargolfer_install.exe` for Golfer),
+   choose **Run as administrator**, click **Yes**, and go through the installer as normal. Do the same with
+   the other one if you want both games.
+6. **Play.** Use the shortcuts the installer puts on your desktop or Start menu.
+
+If you already tried installing before this fix, just do steps 1 to 5. You don't need to uninstall first.
+
+<details>
+<summary>Prefer a command? (same fix, no download)</summary>
+
+Search the Start menu for `cmd`, right-click **Command Prompt**, choose **Run as administrator**, and paste:
+
+    reg add HKLM\SOFTWARE\WildTangent /v wtRoot /d "C:\WildTangent\\" /f /reg:32
+
+It should say "The operation completed successfully." Then continue from step 4.
+</details>
+
+### What the fix changes
 
 The file sets one value, which tells WildTangent's installer to use `C:\WildTangent` instead of
 `C:\Program Files (x86)\WildTangent`:
